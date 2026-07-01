@@ -10,6 +10,42 @@ import functions
 
 MODEL = "gemini-2.5-flash"
 
+def call_function(function_call: types.FunctionCall, verbose: bool = False) -> types.Content:
+    function_name = function_call.name or ""
+    try:
+        fn = functions.fn_dispatch[function_name]
+    except KeyError:
+        return types.Content(
+                role="tool",
+                parts=[
+                    types.Part.from_function_response(
+                        name=function_name,
+                        response={"error": f"Unknown function: {function_name}"},
+                        )
+                    ],
+                )
+
+    if verbose:
+        print(f"Calling function: {function_call.name}({function_call.args})")
+    else:
+        print(f" - Calling function: {function_call.name}")
+
+    args = dict(function_call.args) if function_call.args else {}
+    args["working_directory"] = "./calculator"
+
+    function_result: str = fn(**args)
+
+    return types.Content(
+            role="tool",
+            parts=[
+                types.Part.from_function_response(
+                    name=function_name,
+                    response={"result": function_result},
+                    )
+                ],
+            )
+
+
 def prompt_gemini(messages: list[types.Content], verbose: bool = False):
     _ = load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -35,7 +71,15 @@ def prompt_gemini(messages: list[types.Content], verbose: bool = False):
             print("Response:")
         if response.function_calls is not None:
             for fn_call in response.function_calls:
-                print(f"Calling function: {fn_call.name}({fn_call.args})")
+                result = call_function(fn_call, verbose=verbose)
+                if result.parts is None or len(result.parts) == 0:
+                    raise RuntimeError("No response contents!")
+                elif result.parts[0].function_response is None:
+                    raise RuntimeError("No function response!")
+                elif result.parts[0].function_response.response is None:
+                    raise RuntimeError("Empty function response!")
+                if verbose:
+                    print(f"-> {result.parts[0].function_response.response}")
         else:
             print(response.text)
 
