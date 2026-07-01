@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
+from prompts import system_prompt
+
 MODEL = "gemini-2.5-flash"
 
 def prompt_gemini(messages: list[types.Content], verbose: bool = False):
@@ -16,7 +18,8 @@ def prompt_gemini(messages: list[types.Content], verbose: bool = False):
     client = genai.Client(api_key=api_key)
     response = client.models.generate_content(
             model=MODEL,
-            contents=messages
+            contents=messages,
+            config=types.GenerateContentConfig(system_instruction=system_prompt),
             )
 
     usage = response.usage_metadata
