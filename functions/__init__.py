@@ -3,12 +3,18 @@ from collections.abc import Callable
 
 from google.genai import types
 
+__all__ = [
+        "call_function",
+        "available_functions"
+        ]
+
 from . import (
         get_file_content,
         get_files_info,
         run_python_file,
         write_file
         )
+from .interface import FunctionCaller
 
 modules = (
         get_file_content,
@@ -30,3 +36,5 @@ for mod in modules:
 available_functions = types.Tool(
         function_declarations=tools
         )
+
+call_function = FunctionCaller(fn_dispatch)
