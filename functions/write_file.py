@@ -1,5 +1,26 @@
 import pathlib
+
+from google.genai import types
+
 from .common import validate_path, ValidatePathResult, Permissions
+
+schema = types.FunctionDeclaration(
+        name = "write_file",
+        description = "Write text to a file. Overwrites existing files. Creates a new file and its parent directories if needed",
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "file_path": types.Schema(
+                    type=types.Type.STRING,
+                    description="Mandatory. Path to the file where the contents will be written, relative to the working directory",
+                    ),
+                "content": types.Schema(
+                    type=types.Type.STRING,
+                    description="Mandatory. The string of text to be written to the file",
+                    ),
+                },
+            ),
+        )
 
 def write_file(working_directory: str, file_path: str, content: str) -> str:
     try:
@@ -22,3 +43,5 @@ def write_file(working_directory: str, file_path: str, content: str) -> str:
                 return f'Error: Lacking write permissions for: "{file_path}"'
     except Exception as ex:
         return f'Error: {ex}'
+
+exported_function = write_file

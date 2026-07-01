@@ -1,6 +1,28 @@
-from .common import validate_path, ValidatePathResult
 import pathlib
 import subprocess
+
+from google.genai import types
+
+from .common import validate_path, ValidatePathResult
+
+schema = types.FunctionDeclaration(
+        name = "run_python_file",
+        description = "Execute a Python script, optionally accepting arguments",
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "file_path": types.Schema(
+                    type=types.Type.STRING,
+                    description="Mandatory. Path to the script to be executed, relative to the working directory. The script cannot run for more than 30 seconds and a timeout error will be produced otherwise",
+                    ),
+                "args": types.Schema(
+                    type=types.Type.ARRAY,
+                    description="Optional. Array of command line arguments to be passed to the script (default is an empty array)",
+                    items=types.Schema(type=types.Type.STRING),
+                    ),
+                },
+            ),
+        )
 
 RUN_TIMEOUT_SEC = 30
 
@@ -38,3 +60,4 @@ def run_python_file(working_directory: str, file_path: str, args: list[str] | No
     except Exception as ex:
         return f'Error: {ex}'
 
+exported_function = run_python_file

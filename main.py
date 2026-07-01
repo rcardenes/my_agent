@@ -6,6 +6,7 @@ from google import genai
 from google.genai import types
 
 from prompts import system_prompt
+import functions
 
 MODEL = "gemini-2.5-flash"
 
@@ -19,7 +20,9 @@ def prompt_gemini(messages: list[types.Content], verbose: bool = False):
     response = client.models.generate_content(
             model=MODEL,
             contents=messages,
-            config=types.GenerateContentConfig(system_instruction=system_prompt),
+            config=types.GenerateContentConfig(
+                tools=[functions.available_functions],
+                system_instruction=system_prompt),
             )
 
     usage = response.usage_metadata
@@ -30,7 +33,11 @@ def prompt_gemini(messages: list[types.Content], verbose: bool = False):
             print(f"Prompt tokens: {usage.prompt_token_count}")
             print(f"Response tokens: {usage.candidates_token_count}")
             print("Response:")
-        print(response.text)
+        if response.function_calls is not None:
+            for fn_call in response.function_calls:
+                print(f"Calling function: {fn_call.name}({fn_call.args})")
+        else:
+            print(response.text)
 
 def main():
     parser = argparse.ArgumentParser(description="Chatbot")
