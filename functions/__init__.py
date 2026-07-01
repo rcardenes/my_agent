@@ -10,10 +10,10 @@ from . import (
         )
 
 modules = (
-#        get_file_content,
+        get_file_content,
         get_files_info,
-#        run_python_file,
-#        write_file
+        run_python_file,
+        write_file
         )
 
 tools: list[types.FunctionDeclaration] = []

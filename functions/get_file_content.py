@@ -7,16 +7,17 @@ from .common import validate_path, ValidatePathResult
 MAX_CHARS = 10000
 
 schema = types.FunctionDeclaration(
-        name = "get_files_content",
+        name = "get_file_content",
         description = "Reads and returns the contents of a file, truncating it if too large",
         parameters=types.Schema(
             type=types.Type.OBJECT,
             properties={
                 "file_path": types.Schema(
                     type=types.Type.STRING,
-                    description="Mandatory. Path to the file to be read, relative to the working directory",
+                    description="Path to the file to be read, relative to the working directory",
                     ),
                 },
+            required=["file_path"],
             ),
         )
 

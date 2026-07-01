@@ -13,7 +13,7 @@ schema = types.FunctionDeclaration(
             properties={
                 "file_path": types.Schema(
                     type=types.Type.STRING,
-                    description="Mandatory. Path to the script to be executed, relative to the working directory. The script cannot run for more than 30 seconds and a timeout error will be produced otherwise",
+                    description="Path to the script to be executed, relative to the working directory. The script cannot run for more than 30 seconds and a timeout error will be produced otherwise",
                     ),
                 "args": types.Schema(
                     type=types.Type.ARRAY,
@@ -21,6 +21,7 @@ schema = types.FunctionDeclaration(
                     items=types.Schema(type=types.Type.STRING),
                     ),
                 },
+            required=["file_path"],
             ),
         )
 

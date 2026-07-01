@@ -12,13 +12,14 @@ schema = types.FunctionDeclaration(
             properties={
                 "file_path": types.Schema(
                     type=types.Type.STRING,
-                    description="Mandatory. Path to the file where the contents will be written, relative to the working directory",
+                    description="Path to the file where the contents will be written, relative to the working directory",
                     ),
                 "content": types.Schema(
                     type=types.Type.STRING,
-                    description="Mandatory. The string of text to be written to the file",
+                    description="The string of text to be written to the file",
                     ),
                 },
+            required = ["file_path", "content"],
             ),
         )
 
