@@ -5,7 +5,7 @@ def get_files_info(working_directory: str, directory: str = ".") -> str:
     match validate_path(working_directory, directory):
         case ValidatePathResult.ForbiddenPath:
             return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
-        case ValidatePathResult.ValidFile:
+        case ValidatePathResult.ValidDir:
             target_path = pathlib.Path(working_directory) / directory
             results: list[str] = []
             for fpath in target_path.iterdir():
